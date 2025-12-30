@@ -20,5 +20,4 @@ public interface ReservaRepository extends JpaRepository<ReservaModel, Long> {
     List<ReservaModel> findByDataCheckIn(LocalDate dataCheckIn);
 
     List<ReservaModel> findByDataCheckOut(LocalDate dataCheckOut);
-
 }
