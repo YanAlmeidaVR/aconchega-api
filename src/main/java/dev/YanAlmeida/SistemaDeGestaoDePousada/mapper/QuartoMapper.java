@@ -12,7 +12,7 @@ public class QuartoMapper {
         QuartoModel quarto = new QuartoModel();
         quarto.setNumeroQuarto(dto.getNumero());
         quarto.setTipoQuarto(dto.getTipo());
-        quarto.setPreçoPorNoite(dto.getPrecoPorNoite());
+        quarto.setPrecoPorNoite(dto.getPrecoPorNoite());
         quarto.setQuartoStatus(QuartoStatus.DISPONIVEL); // Status padrão
         return quarto;
     }
@@ -23,7 +23,7 @@ public class QuartoMapper {
         dto.setId(quarto.getId());
         dto.setNumero(quarto.getNumeroQuarto());
         dto.setTipo(quarto.getTipoQuarto());
-        dto.setPrecoPorNoite(quarto.getPreçoPorNoite());
+        dto.setPrecoPorNoite(quarto.getPrecoPorNoite());
         dto.setStatus(quarto.getQuartoStatus());
         return dto;
     }

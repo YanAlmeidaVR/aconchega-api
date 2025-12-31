@@ -44,9 +44,9 @@ public class ReservaService {
             throw new RuntimeException("Data de check-out deve ser posterior ao check-in");
         }
 
-        // Buscar hóspede pelo CPF
-        HospedeModel hospede = hospedeRepository.findByCpf(dto.getCpfHospede())
-                .orElseThrow(() -> new RuntimeException("Hóspede não encontrado com CPF: " + dto.getCpfHospede()));
+        // Buscar hóspede pelo ID
+        HospedeModel hospede = hospedeRepository.findById(dto.getHospedeId())
+                .orElseThrow(() -> new RuntimeException("Hóspede não encontrado com ID: " + dto.getHospedeId()));
 
         // Buscar quarto pelo número
         QuartoModel quarto = quartoRepository.findByNumeroQuarto(dto.getNumeroQuarto())
@@ -57,7 +57,7 @@ public class ReservaService {
             throw new RuntimeException("Quarto não está disponível");
         }
 
-        // Verificar conflito de datas (LÓGICA NO SERVICE)
+        // Verificar conflito de datas
         List<ReservaModel> reservasDoQuarto = reservaRepository.findByNumeroQuarto(dto.getNumeroQuarto());
 
         boolean temConflito = reservasDoQuarto.stream()
@@ -74,7 +74,7 @@ public class ReservaService {
         // Criar reserva com snapshot dos dados
         ReservaModel reserva = new ReservaModel();
 
-        // Dados do hóspede (snapshot)
+        // Dados do hóspede (snapshot) - agora pega direto do hospede encontrado
         reserva.setNomeHospede(hospede.getNomeHospede());
         reserva.setCpfHospede(hospede.getCpf());
         reserva.setTelefoneHospede(hospede.getTelefone());
@@ -90,7 +90,7 @@ public class ReservaService {
 
         // Calcular valor total
         long dias = ChronoUnit.DAYS.between(dto.getDataCheckIn(), dto.getDataCheckOut());
-        BigDecimal valorTotal = quarto.getPreçoPorNoite().multiply(BigDecimal.valueOf(dias));
+        BigDecimal valorTotal = quarto.getPrecoPorNoite().multiply(BigDecimal.valueOf(dias));
         reserva.setValorTotal(valorTotal);
 
         // Definir status inicial
@@ -135,7 +135,24 @@ public class ReservaService {
         return ReservaMapper.toResponseDTO(atualizada);
     }
 
-    // 3. Fazer check-out
+    // 3. Registrar Devolucao da Chave e Fazer check-out
+    @Transactional
+    public ReservaResponseDTO registrarDevolucaoChave(Long reservaId){
+        ReservaModel reserva = reservaRepository.findById(reservaId)
+                .orElseThrow(() -> new RuntimeException("Reserva não encontrada: " + reservaId));
+
+        // Validar se a reserva está ativa
+        if (reserva.getStatusReserva() != StatusReserva.ATIVA){
+            throw new RuntimeException("Apenas reservas ativas podem devolver chaves");
+        }
+
+        // Atualizar status da chave
+        reserva.setStatusChave(StatusChave.DEVOLVIDA);
+
+        ReservaModel atualizada = reservaRepository.save(reserva);
+        return ReservaMapper.toResponseDTO(atualizada);
+    }
+
     @Transactional
     public ReservaResponseDTO fazerCheckOut(Long reservaId){
         ReservaModel reserva = reservaRepository.findById(reservaId)
@@ -148,7 +165,7 @@ public class ReservaService {
 
         // Verificar pagamento
         if (reserva.getStatusPagamento() != StatusPagamento.PAGO){
-            throw new RuntimeException("Pagamento pendente. Realize o pagamento antes do check-out");
+            throw new RuntimeException("Pagamento pendente. Atualize o pagamento antes do check-out");
         }
 
         // Verificar devolução da chave

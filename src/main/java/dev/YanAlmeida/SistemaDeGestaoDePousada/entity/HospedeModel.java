@@ -2,16 +2,12 @@ package dev.YanAlmeida.SistemaDeGestaoDePousada.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Entity
 @Table(name = "tb_hospede")
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 public class HospedeModel {
 
     @Id
@@ -27,4 +23,36 @@ public class HospedeModel {
 
     @Column(name = "cpf",unique = true,length = 14)
     private String cpf;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getNomeHospede() {
+        return nomeHospede;
+    }
+
+    public void setNomeHospede(String nomeHospede) {
+        this.nomeHospede = nomeHospede;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
 }

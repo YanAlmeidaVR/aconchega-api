@@ -1,17 +1,12 @@
 package dev.YanAlmeida.SistemaDeGestaoDePousada.dto.hospede;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.hibernate.validator.constraints.br.CPF;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 public class HospedeCreateDTO {
 
     @NotBlank(message = "Nome do hóspede é obrigatório")
@@ -23,4 +18,29 @@ public class HospedeCreateDTO {
     @NotBlank(message = "CPF é obrigatório")
     @CPF(message = "CPF inválido") // ← Validação automática!
     private String cpf;
+
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
 }

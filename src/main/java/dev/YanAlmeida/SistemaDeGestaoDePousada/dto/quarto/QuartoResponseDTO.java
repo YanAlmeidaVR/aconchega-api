@@ -10,8 +10,7 @@ import java.math.BigDecimal;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+
 public class QuartoResponseDTO {
 
     private Long id;
@@ -19,4 +18,44 @@ public class QuartoResponseDTO {
     private TipoQuarto tipo;
     private BigDecimal precoPorNoite;
     private QuartoStatus status;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Integer getNumero() {
+        return numero;
+    }
+
+    public void setNumero(Integer numero) {
+        this.numero = numero;
+    }
+
+    public TipoQuarto getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(TipoQuarto tipo) {
+        this.tipo = tipo;
+    }
+
+    public BigDecimal getPrecoPorNoite() {
+        return precoPorNoite;
+    }
+
+    public void setPrecoPorNoite(BigDecimal precoPorNoite) {
+        this.precoPorNoite = precoPorNoite;
+    }
+
+    public QuartoStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(QuartoStatus status) {
+        this.status = status;
+    }
 }

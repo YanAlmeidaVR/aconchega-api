@@ -51,7 +51,7 @@ public class QuartoService {
                 .orElseThrow(() -> new RuntimeException("Quarto não encontrado: " + numero));
 
         quarto.setTipoQuarto(dto.getTipo());
-        quarto.setPreçoPorNoite(dto.getPrecoPorNoite());
+        quarto.setPrecoPorNoite(dto.getPrecoPorNoite());
 
         QuartoModel atualizado = quartoRepository.save(quarto);
         return QuartoMapper.toResponseDTO(atualizado);

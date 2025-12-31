@@ -4,37 +4,71 @@ import dev.YanAlmeida.SistemaDeGestaoDePousada.enums.quarto.QuartoStatus;
 import dev.YanAlmeida.SistemaDeGestaoDePousada.enums.quarto.TipoQuarto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import java.math.BigDecimal;
 
 @Entity
 @Table(name = "tb_quarto")
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+
 public class QuartoModel {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
 
-    @Column(name = "numero_quarto")
+    @Column(name = "numero_quarto", nullable = false, unique = true)
     private Integer numeroQuarto;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "tipoDeQuarto")
+    @Column(name = "tipo_de_quarto", nullable = false)
     private TipoQuarto tipoQuarto;
 
-    @Column(name = "preço_por_noite")
-    private BigDecimal preçoPorNoite;
+    @Column(name = "preco_por_noite", nullable = false, precision = 10, scale = 2)
+    private BigDecimal precoPorNoite;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "statusQuarto")
+    @Column(name = "status_quarto", nullable = false)
     private QuartoStatus quartoStatus;
 
+    public Long getId() {
+        return id;
+    }
 
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Integer getNumeroQuarto() {
+        return numeroQuarto;
+    }
+
+    public void setNumeroQuarto(Integer numeroQuarto) {
+        this.numeroQuarto = numeroQuarto;
+    }
+
+    public TipoQuarto getTipoQuarto() {
+        return tipoQuarto;
+    }
+
+    public void setTipoQuarto(TipoQuarto tipoQuarto) {
+        this.tipoQuarto = tipoQuarto;
+    }
+
+    public BigDecimal getPrecoPorNoite() {
+        return precoPorNoite;
+    }
+
+    public void setPrecoPorNoite(BigDecimal precoPorNoite) {
+        this.precoPorNoite = precoPorNoite;
+    }
+
+    public QuartoStatus getQuartoStatus() {
+        return quartoStatus;
+    }
+
+    public void setQuartoStatus(QuartoStatus quartoStatus) {
+        this.quartoStatus = quartoStatus;
+    }
 }

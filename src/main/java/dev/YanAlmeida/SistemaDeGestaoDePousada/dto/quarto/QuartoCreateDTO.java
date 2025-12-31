@@ -4,15 +4,12 @@ import dev.YanAlmeida.SistemaDeGestaoDePousada.enums.quarto.TipoQuarto;
 import jakarta.validation.constraints.DecimalMin;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import java.math.BigDecimal;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
+
 public class QuartoCreateDTO {
 
     @NotNull(message = "Número do quarto é obrigatório")
@@ -24,4 +21,28 @@ public class QuartoCreateDTO {
     @NotNull(message = "Preço por noite é obrigatório")
     @DecimalMin(value = "0.0", inclusive = false, message = "Preço deve ser maior que zero")
     private BigDecimal precoPorNoite;
+
+    public Integer getNumero() {
+        return numero;
+    }
+
+    public void setNumero(Integer numero) {
+        this.numero = numero;
+    }
+
+    public TipoQuarto getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(TipoQuarto tipo) {
+        this.tipo = tipo;
+    }
+
+    public BigDecimal getPrecoPorNoite() {
+        return precoPorNoite;
+    }
+
+    public void setPrecoPorNoite(BigDecimal precoPorNoite) {
+        this.precoPorNoite = precoPorNoite;
+    }
 }
