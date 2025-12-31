@@ -39,8 +39,7 @@ public class ReservaService {
     @Transactional
     public ReservaResponseDTO criarReserva(ReservaCreateDTO dto){
         // Validar datas
-        if (dto.getDataCheckOut().isBefore(dto.getDataCheckIn()) ||
-                dto.getDataCheckOut().isEqual(dto.getDataCheckIn())){
+        if (dto.getDataCheckOut().isBefore(dto.getDataCheckIn()) || dto.getDataCheckOut().isEqual(dto.getDataCheckIn())){
             throw new RuntimeException("Data de check-out deve ser posterior ao check-in");
         }
 
@@ -51,11 +50,6 @@ public class ReservaService {
         // Buscar quarto pelo número
         QuartoModel quarto = quartoRepository.findByNumeroQuarto(dto.getNumeroQuarto())
                 .orElseThrow(() -> new RuntimeException("Quarto não encontrado: " + dto.getNumeroQuarto()));
-
-        // Verificar se quarto está disponível
-        if (quarto.getQuartoStatus() != QuartoStatus.DISPONIVEL){
-            throw new RuntimeException("Quarto não está disponível");
-        }
 
         // Verificar conflito de datas
         List<ReservaModel> reservasDoQuarto = reservaRepository.findByNumeroQuarto(dto.getNumeroQuarto());
@@ -71,15 +65,15 @@ public class ReservaService {
             throw new RuntimeException("Quarto já está reservado neste período");
         }
 
-        // Criar reserva com snapshot dos dados
+        // Começando a criar a reserva
         ReservaModel reserva = new ReservaModel();
 
-        // Dados do hóspede (snapshot) - agora pega direto do hospede encontrado
+        // Dados do hóspede
         reserva.setNomeHospede(hospede.getNomeHospede());
         reserva.setCpfHospede(hospede.getCpf());
         reserva.setTelefoneHospede(hospede.getTelefone());
 
-        // Dados do quarto (snapshot)
+        // Dados do quarto
         reserva.setNumeroQuarto(quarto.getNumeroQuarto());
         reserva.setTipoQuarto(quarto.getTipoQuarto());
 
@@ -237,12 +231,12 @@ public class ReservaService {
     public List<ReservaResponseDTO> buscarReservasDoDia(){
         LocalDate hoje = LocalDate.now();
 
-        // Buscar check-ins de hoje (status ATIVA e data check-in = hoje)
+        // Buscar check-ins de hoje
         List<ReservaModel> checkIns = reservaRepository.findByDataCheckIn(hoje).stream()
                 .filter(r -> r.getStatusReserva() == StatusReserva.ATIVA)
                 .collect(Collectors.toList());
 
-        // Buscar check-outs de hoje (status ATIVA e data check-out = hoje)
+        // Buscar check-outs de hoje
         List<ReservaModel> checkOuts = reservaRepository.findByDataCheckOut(hoje).stream()
                 .filter(r -> r.getStatusReserva() == StatusReserva.ATIVA)
                 .collect(Collectors.toList());
