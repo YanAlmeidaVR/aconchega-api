@@ -7,6 +7,7 @@ import dev.YanAlmeida.SistemaDeGestaoDePousada.entity.QuartoModel;
 import dev.YanAlmeida.SistemaDeGestaoDePousada.entity.ReservaModel;
 import dev.YanAlmeida.SistemaDeGestaoDePousada.enums.quarto.QuartoStatus;
 import dev.YanAlmeida.SistemaDeGestaoDePousada.enums.reserva.*;
+import dev.YanAlmeida.SistemaDeGestaoDePousada.exception.reserva.*;
 import dev.YanAlmeida.SistemaDeGestaoDePousada.mapper.ReservaMapper;
 import dev.YanAlmeida.SistemaDeGestaoDePousada.repository.HospedeRepository;
 import dev.YanAlmeida.SistemaDeGestaoDePousada.repository.QuartoRepository;
@@ -39,30 +40,34 @@ public class ReservaService {
     @Transactional
     public ReservaResponseDTO criarReserva(ReservaCreateDTO dto){
         // Validar datas
-        if (dto.getDataCheckOut().isBefore(dto.getDataCheckIn()) || dto.getDataCheckOut().isEqual(dto.getDataCheckIn())){
-            throw new RuntimeException("Data de check-out deve ser posterior ao check-in");
+        if (!dto.getDataCheckOut().isAfter(dto.getDataCheckIn())){
+            throw new CheckInInvalidoException("Data de check-out deve ser posterior ao check-in");
         }
 
         // Buscar hóspede pelo ID
         HospedeModel hospede = hospedeRepository.findById(dto.getHospedeId())
-                .orElseThrow(() -> new RuntimeException("Hóspede não encontrado com ID: " + dto.getHospedeId()));
+                .orElseThrow(() -> new ReservaNotFoundExceptionById(dto.getHospedeId()));
 
         // Buscar quarto pelo número
         QuartoModel quarto = quartoRepository.findByNumeroQuarto(dto.getNumeroQuarto())
-                .orElseThrow(() -> new RuntimeException("Quarto não encontrado: " + dto.getNumeroQuarto()));
+                .orElseThrow(() -> new ReservaNotFoundExceptionByNumber(dto.getNumeroQuarto()));
 
         // Verificar conflito de datas
         List<ReservaModel> reservasDoQuarto = reservaRepository.findByNumeroQuarto(dto.getNumeroQuarto());
 
-        boolean temConflito = reservasDoQuarto.stream()
+        boolean temConflito = reservaRepository.findByNumeroQuarto(dto.getNumeroQuarto())
+                .stream()
                 .filter(r -> r.getStatusReserva() == StatusReserva.ATIVA)
                 .anyMatch(r ->
                         r.getDataCheckIn().isBefore(dto.getDataCheckOut()) &&
                                 r.getDataCheckOut().isAfter(dto.getDataCheckIn())
                 );
 
-        if (temConflito){
-            throw new RuntimeException("Quarto já está reservado neste período");
+        if (temConflito) {throw new QuartoOcupadoException(
+                    dto.getNumeroQuarto(),
+                    dto.getDataCheckIn(),
+                    dto.getDataCheckOut()
+            );
         }
 
         // Começando a criar a reserva
@@ -104,34 +109,29 @@ public class ReservaService {
     // 2. Fazer check-in
     @Transactional
     public ReservaResponseDTO fazerCheckIn(Long reservaId){
+
+        // Busca a reserva pelo id
         ReservaModel reserva = reservaRepository.findById(reservaId)
-                .orElseThrow(() -> new RuntimeException("Reserva não encontrada: " + reservaId));
+                .orElseThrow(() -> new ReservaNotFoundExceptionById(reservaId));
 
-        // Validar status
+        // Verifica o status da reserva
         if (reserva.getStatusReserva() != StatusReserva.ATIVA){
-            throw new RuntimeException("Reserva não está ativa");
+            throw new ReservaJaCanceladaException();
         }
 
-        // Validar se é o dia do check-in
-        LocalDate hoje = LocalDate.now();
-        if (hoje.isBefore(reserva.getDataCheckIn())){
-            throw new RuntimeException("Ainda não é o dia do check-in");
+        // Verifica se é o dia de check-in
+        if (LocalDate.now().isBefore(reserva.getDataCheckIn())){
+            throw new CheckInInvalidoException("Ainda não é o dia do check-in");
         }
 
-        // Atualizar status do quarto
-        QuartoModel quarto = quartoRepository.findByNumeroQuarto(reserva.getNumeroQuarto())
-                .orElseThrow(() -> new RuntimeException("Quarto não encontrado"));
-        quarto.setQuartoStatus(QuartoStatus.OCUPADO);
-        quartoRepository.save(quarto);
-
-        // Atualiza no banco de dados
-        ReservaModel atualizada = reservaRepository.save(reserva);
-        return ReservaMapper.toResponseDTO(atualizada);
+        return ReservaMapper.toResponseDTO(reserva);
     }
 
-    // 3. Registrar Devolucao da Chave e Fazer check-out
+
+    // 3. Registrar Devolucao da Chave
     @Transactional
     public ReservaResponseDTO registrarDevolucaoChave(Long reservaId){
+        // Busca a reserva pelo id
         ReservaModel reserva = reservaRepository.findById(reservaId)
                 .orElseThrow(() -> new RuntimeException("Reserva não encontrada: " + reservaId));
 
@@ -147,88 +147,78 @@ public class ReservaService {
         return ReservaMapper.toResponseDTO(atualizada);
     }
 
+    // 4. Fazer Check-Out
     @Transactional
     public ReservaResponseDTO fazerCheckOut(Long reservaId){
+
+        // Busca a reserva pelo id
         ReservaModel reserva = reservaRepository.findById(reservaId)
-                .orElseThrow(() -> new RuntimeException("Reserva não encontrada: " + reservaId));
+                .orElseThrow(() -> new ReservaNotFoundExceptionById(reservaId));
 
-        // Validar status
-        if (reserva.getStatusReserva() != StatusReserva.ATIVA){
-            throw new RuntimeException("Reserva não está ativa");
+        // Verifica o status da reserva
+        if (reserva.getStatusReserva() != StatusReserva.ATIVA) {
+            throw new ReservaJaCanceladaException();
         }
 
-        // Verificar pagamento
+        // Verifica o status do pagamento
         if (reserva.getStatusPagamento() != StatusPagamento.PAGO){
-            throw new RuntimeException("Pagamento pendente. Atualize o pagamento antes do check-out");
+            throw new PagamentoInvalidoException("Pagamento pendente");
         }
 
-        // Verificar devolução da chave
+        // Verifica se a chave foi devolvida ou não
         if (reserva.getStatusChave() != StatusChave.DEVOLVIDA){
-            throw new RuntimeException("Chave não foi devolvida");
+            throw new CheckInInvalidoException("Chave não foi devolvida");
         }
 
-        // Atualizar status
+        // Muda o status da reserva para FINALIZADA
         reserva.setStatusReserva(StatusReserva.FINALIZADA);
-
-        // Liberar quarto
-        QuartoModel quarto = quartoRepository.findByNumeroQuarto(reserva.getNumeroQuarto())
-                .orElseThrow(() -> new RuntimeException("Quarto não encontrado"));
-        quarto.setQuartoStatus(QuartoStatus.DISPONIVEL);
-        quartoRepository.save(quarto);
-
-        ReservaModel atualizada = reservaRepository.save(reserva);
-        return ReservaMapper.toResponseDTO(atualizada);
+        return ReservaMapper.toResponseDTO(reservaRepository.save(reserva));
     }
 
-    // 4. Cancelar reserva
+
+    // 5. Cancelar reserva
     @Transactional
     public ReservaResponseDTO cancelarReserva(Long reservaId){
-        ReservaModel reserva = reservaRepository.findById(reservaId)
-                .orElseThrow(() -> new RuntimeException("Reserva não encontrada: " + reservaId));
 
-        // Só pode cancelar se estiver ativa
+        // Busca a reserva pelo id
+        ReservaModel reserva = reservaRepository.findById(reservaId)
+                .orElseThrow(() -> new ReservaNotFoundExceptionById(reservaId));
+
+        // Verifica o status da reserva
         if (reserva.getStatusReserva() != StatusReserva.ATIVA){
-            throw new RuntimeException("Apenas reservas ativas podem ser canceladas");
+            throw new ReservaJaCanceladaException();
         }
 
-        // Atualizar status
+        // Muda o status da reserva para CANCELADA
         reserva.setStatusReserva(StatusReserva.CANCELADA);
-
-        // Liberar quarto
-        QuartoModel quarto = quartoRepository.findByNumeroQuarto(reserva.getNumeroQuarto())
-                .orElseThrow(() -> new RuntimeException("Quarto não encontrado"));
-        quarto.setQuartoStatus(QuartoStatus.DISPONIVEL);
-        quartoRepository.save(quarto);
-
-        ReservaModel atualizada = reservaRepository.save(reserva);
-        return ReservaMapper.toResponseDTO(atualizada);
+        return ReservaMapper.toResponseDTO(reservaRepository.save(reserva));
     }
 
-    // 5. Processar pagamento
+
+    // 6. Processar pagamento
     @Transactional
     public ReservaResponseDTO processarPagamento(Long reservaId, MetodoPagamento metodoPagamento){
+
+        // Busca a reserva pelo id
         ReservaModel reserva = reservaRepository.findById(reservaId)
-                .orElseThrow(() -> new RuntimeException("Reserva não encontrada: " + reservaId));
+                .orElseThrow(() -> new ReservaNotFoundExceptionById(reservaId));
 
-        // Validar se a reserva está ativa
+        // Verifica se a reserva está ativa
         if (reserva.getStatusReserva() != StatusReserva.ATIVA){
-            throw new RuntimeException("Apenas reservas ativas podem ter pagamento processado");
+            throw new ReservaJaCanceladaException();
         }
 
-        if (metodoPagamento != null){
-            reserva.setMetodoPagamento(metodoPagamento);
-        }
-
-        // Atualizar status de pagamento
+        // Coloca o metódo de pagamento e muda o status para PAGO
+        reserva.setMetodoPagamento(metodoPagamento);
         reserva.setStatusPagamento(StatusPagamento.PAGO);
 
-        ReservaModel atualizada = reservaRepository.save(reserva);
-        return ReservaMapper.toResponseDTO(atualizada);
+        return ReservaMapper.toResponseDTO(reservaRepository.save(reserva));
     }
+
 
     // ===== CONSULTAS =====
 
-    // 6. Listar todas as reservas
+    // 7. Listar todas as reservas
     public List<ReservaResponseDTO> listarReservas(){
         return reservaRepository.findAll()
                 .stream()
@@ -236,7 +226,7 @@ public class ReservaService {
                 .collect(Collectors.toList());
     }
 
-    // 7. Buscar reservas do dia (check-ins e check-outs)
+    // 8. Buscar reservas do dia (check-ins e check-outs)
     public List<ReservaResponseDTO> buscarReservasDoDia(){
         LocalDate hoje = LocalDate.now();
 
@@ -257,7 +247,7 @@ public class ReservaService {
                 .collect(Collectors.toList());
     }
 
-    // 8. Buscar reservas por quarto
+    // 9. Buscar reservas por quarto
     public List<ReservaResponseDTO> buscarPorQuarto(Integer numeroQuarto){
         return reservaRepository.findByNumeroQuarto(numeroQuarto)
                 .stream()
@@ -268,7 +258,7 @@ public class ReservaService {
 
     // ===== MÉTRICAS =====
 
-    // 9. Calcular receita em período
+    // 10. Calcular receita em período
     public BigDecimal calcularReceita(LocalDate inicio, LocalDate fim){
         List<ReservaModel> reservas = reservaRepository.findAll().stream()
                 .filter(r -> r.getStatusPagamento() == StatusPagamento.PAGO)
@@ -280,7 +270,7 @@ public class ReservaService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
-    // 10. Calcular taxa de ocupação
+    // 11. Calcular taxa de ocupação
     public Double calcularTaxaOcupacao(){
         long totalQuartos = quartoRepository.count();
         long quartosOcupados = quartoRepository.findByQuartoStatus(QuartoStatus.OCUPADO).size();
