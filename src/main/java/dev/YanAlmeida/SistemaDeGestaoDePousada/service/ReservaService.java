@@ -206,9 +206,18 @@ public class ReservaService {
 
     // 5. Processar pagamento
     @Transactional
-    public ReservaResponseDTO processarPagamento(Long reservaId){
+    public ReservaResponseDTO processarPagamento(Long reservaId, MetodoPagamento metodoPagamento){
         ReservaModel reserva = reservaRepository.findById(reservaId)
                 .orElseThrow(() -> new RuntimeException("Reserva não encontrada: " + reservaId));
+
+        // Validar se a reserva está ativa
+        if (reserva.getStatusReserva() != StatusReserva.ATIVA){
+            throw new RuntimeException("Apenas reservas ativas podem ter pagamento processado");
+        }
+
+        if (metodoPagamento != null){
+            reserva.setMetodoPagamento(metodoPagamento);
+        }
 
         // Atualizar status de pagamento
         reserva.setStatusPagamento(StatusPagamento.PAGO);
