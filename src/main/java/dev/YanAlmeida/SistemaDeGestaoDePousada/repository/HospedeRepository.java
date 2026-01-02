@@ -15,6 +15,4 @@ public interface HospedeRepository extends JpaRepository<HospedeModel, Long> {
     // Verificar se CPF existe
     boolean existsByCpf(String cpf);
 
-    // Buscar por nome
-    Optional<HospedeModel> findByNomeHospede(String nomeHospede);
 }

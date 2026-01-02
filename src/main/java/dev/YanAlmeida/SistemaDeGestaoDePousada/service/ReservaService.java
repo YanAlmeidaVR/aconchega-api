@@ -34,7 +34,7 @@ public class ReservaService {
     @Autowired
     private QuartoRepository quartoRepository;
 
-    // ===== OPERAÇÕES DE RESERVA =====
+    // OPERAÇÕES DE RESERVA
 
     // 1. Criar nova reserva
     @Transactional
@@ -216,7 +216,7 @@ public class ReservaService {
     }
 
 
-    // ===== CONSULTAS =====
+    // CONSULTAS
 
     // 7. Listar todas as reservas
     public List<ReservaResponseDTO> listarReservas(){
@@ -256,7 +256,7 @@ public class ReservaService {
     }
 
 
-    // ===== MÉTRICAS =====
+    // MÉTRICAS
 
     // 10. Calcular receita em período
     public BigDecimal calcularReceita(LocalDate inicio, LocalDate fim){

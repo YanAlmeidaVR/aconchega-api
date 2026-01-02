@@ -3,6 +3,8 @@ package dev.YanAlmeida.SistemaDeGestaoDePousada.service;
 import dev.YanAlmeida.SistemaDeGestaoDePousada.dto.hospede.HospedeCreateDTO;
 import dev.YanAlmeida.SistemaDeGestaoDePousada.dto.hospede.HospedeResponseDTO;
 import dev.YanAlmeida.SistemaDeGestaoDePousada.entity.HospedeModel;
+import dev.YanAlmeida.SistemaDeGestaoDePousada.exception.hospede.CpfJaCadastradoException;
+import dev.YanAlmeida.SistemaDeGestaoDePousada.exception.hospede.HospedeNotFoundException;
 import dev.YanAlmeida.SistemaDeGestaoDePousada.mapper.HospedeMapper;
 import dev.YanAlmeida.SistemaDeGestaoDePousada.repository.HospedeRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,11 +17,13 @@ import java.util.stream.Collectors;
 public class HospedeService {
 
     @Autowired
-    HospedeRepository hospedeRepository;
+    private HospedeRepository hospedeRepository;
 
+    // 1. Cadastrar hóspede
     public HospedeResponseDTO cadastrar(HospedeCreateDTO dto){
+
         if (hospedeRepository.existsByCpf(dto.getCpf())){
-            throw new RuntimeException("CPF já cadastrado: " + dto.getCpf());
+            throw new CpfJaCadastradoException(dto.getCpf());
         }
 
         HospedeModel hospede = HospedeMapper.toEntity(dto);
@@ -28,6 +32,7 @@ public class HospedeService {
         return HospedeMapper.toResponseDTO(salvo);
     }
 
+    // 2. Listar todos os hóspedes
     public List<HospedeResponseDTO> listarTodos(){
         return hospedeRepository.findAll()
                 .stream()
@@ -35,20 +40,24 @@ public class HospedeService {
                 .collect(Collectors.toList());
     }
 
-    public HospedeResponseDTO buscarPorNome(String nome){
-        HospedeModel hospede = hospedeRepository.findByNomeHospede(nome).
-                orElseThrow(() -> new RuntimeException("Hóspede não encontrado com nome: " + nome));
+    // 3. Buscar hóspede por ID
+    public HospedeResponseDTO buscarPorId(Long id) {
+        HospedeModel hospede = hospedeRepository.findById(id)
+                .orElseThrow(() -> new HospedeNotFoundException(id));
+
         return HospedeMapper.toResponseDTO(hospede);
     }
 
-    public HospedeResponseDTO atualizar(String nome, HospedeCreateDTO dto){
-        HospedeModel hospede = hospedeRepository.findByNomeHospede(nome).
-                orElseThrow(() -> new RuntimeException("Hóspede não encontrado com nome: " + nome));
+    // 4. Atualizar hóspede
+    public HospedeResponseDTO atualizar(Long id, HospedeCreateDTO dto){
+
+        HospedeModel hospede = hospedeRepository.findById(id)
+                .orElseThrow(() -> new HospedeNotFoundException(id));
+
         hospede.setCpf(dto.getCpf());
         hospede.setTelefone(dto.getTelefone());
 
         HospedeModel atualizado = hospedeRepository.save(hospede);
         return HospedeMapper.toResponseDTO(atualizado);
     }
-
 }

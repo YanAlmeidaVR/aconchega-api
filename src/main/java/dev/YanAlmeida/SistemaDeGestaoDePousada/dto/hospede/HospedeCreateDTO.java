@@ -16,7 +16,7 @@ public class HospedeCreateDTO {
     private String telefone;
 
     @NotBlank(message = "CPF é obrigatório")
-    @CPF(message = "CPF inválido") // ← Validação automática!
+    @CPF(message = "CPF inválido")
     private String cpf;
 
 
@@ -41,6 +41,18 @@ public class HospedeCreateDTO {
     }
 
     public void setCpf(String cpf) {
-        this.cpf = cpf;
+        // Remove qualquer caractere que não seja número
+        String cpfLimpo = cpf.replaceAll("[^0-9]", "");
+
+        // Aplica a máscara se tiver 11 dígitos
+        if (cpfLimpo.length() == 11) {
+            this.cpf = cpfLimpo.substring(0, 3) + "." +
+                    cpfLimpo.substring(3, 6) + "." +
+                    cpfLimpo.substring(6, 9) + "-" +
+                    cpfLimpo.substring(9, 11);
+        } else {
+            this.cpf = cpf;
+        }
     }
+
 }
