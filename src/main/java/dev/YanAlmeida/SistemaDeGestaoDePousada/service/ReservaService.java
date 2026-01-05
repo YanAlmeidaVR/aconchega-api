@@ -172,6 +172,13 @@ public class ReservaService {
 
         // Muda o status da reserva para FINALIZADA
         reserva.setStatusReserva(StatusReserva.FINALIZADA);
+
+        // Muda o status do quarto para DISPONIVEL
+        QuartoModel quarto = quartoRepository.findByNumeroQuarto(reserva.getNumeroQuarto())
+                .orElseThrow(() -> new RuntimeException("Quarto não encontrado: " + reserva.getNumeroQuarto()));
+        quarto.setQuartoStatus(QuartoStatus.DISPONIVEL);
+        quartoRepository.save(quarto);
+
         return ReservaMapper.toResponseDTO(reservaRepository.save(reserva));
     }
 
@@ -188,6 +195,12 @@ public class ReservaService {
         if (reserva.getStatusReserva() != StatusReserva.ATIVA){
             throw new ReservaJaCanceladaException();
         }
+
+        // Muda o status do quarto para DISPONIVEL
+        QuartoModel quarto = quartoRepository.findByNumeroQuarto(reserva.getNumeroQuarto())
+                .orElseThrow(() -> new RuntimeException("Quarto não encontrado: " + reserva.getNumeroQuarto()));
+        quarto.setQuartoStatus(QuartoStatus.DISPONIVEL);
+        quartoRepository.save(quarto);
 
         // Muda o status da reserva para CANCELADA
         reserva.setStatusReserva(StatusReserva.CANCELADA);
