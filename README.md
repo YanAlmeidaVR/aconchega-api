@@ -1,111 +1,295 @@
-# 🏨 Sistema de Gestão de Pousada
+# 🏨 API REST - Sistema de Gestão de Pousada
 
-API REST desenvolvida em Spring Boot para gerenciamento completo de pousadas, incluindo controle de hóspedes, quartos, reservas e métricas operacionais.
+<div align="center">
+
+![Java](https://img.shields.io/badge/Java-17+-ED8B00?style=for-the-badge&logo=openjdk&logoColor=white)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.x-6DB33F?style=for-the-badge&logo=spring&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-316192?style=for-the-badge&logo=postgresql&logoColor=white)
+![Maven](https://img.shields.io/badge/Maven-3.9-C71A36?style=for-the-badge&logo=apache-maven&logoColor=white)
+![JUnit5](https://img.shields.io/badge/JUnit5-Tested-25A162?style=for-the-badge&logo=junit5&logoColor=white)
+
+**API REST completa para gerenciamento de pousadas com controle de hóspedes, quartos e reservas**
+
+[Instalação](#-instalação) • [Endpoints](#-endpoints) • [Arquitetura](#-arquitetura) • [Testes](#-testes)
+
+</div>
+
+---
 
 ## ⚠️ Status do Projeto
 
 **🚧 EM DESENVOLVIMENTO 🚧**
 
-Este projeto está em fase de desenvolvimento ativo. As seguintes funcionalidades ainda precisam ser implementadas:
+| Feature | Status |
+|---------|--------|
+| ✅ CRUD de Hóspedes | Concluído |
+| ✅ CRUD de Quartos | Concluído |
+| ✅ Sistema de Reservas | Concluído |
+| ✅ Testes Unitários (Services) | Concluído |
+| ✅ Testes de Integração (Repositories) | Concluído |
+| ⏳ Autenticação/Autorização | Pendente |
+| ⏳ Documentação Swagger | Pendente |
 
-- [ ] **Autenticação e Autorização** (Spring Security + JWT)
-- [ ] **Documentação da API** (Swagger/OpenAPI)
-- [ ] Deploy em ambiente de produção
-
-✅ **Funcionalidades Implementadas:**
-- Sistema completo de gestão de hóspedes, quartos e reservas
-- Testes unitários (Services) com Mockito
-- Testes de integração (Repositories) com DataJpaTest
-- Cobertura de testes para todas as camadas de repositório e serviço
-
-## 📋 Índice
-
-- [Sobre o Projeto](#-sobre-o-projeto)
-- [Tecnologias Utilizadas](#-tecnologias-utilizadas)
-- [Funcionalidades](#-funcionalidades)
-- [Estrutura do Projeto](#-estrutura-do-projeto)
-- [Instalação e Configuração](#-instalação-e-configuração)
-- [Testes](#-testes)
-- [Endpoints da API](#-endpoints-da-api)
-- [Modelos de Dados](#-modelos-de-dados)
-- [Regras de Negócio](#-regras-de-negócio)
-- [Próximos Passos](#-próximos-passos)
-- [Contribuindo](#-contribuindo)
+---
 
 ## 🎯 Sobre o Projeto
 
-O Sistema de Gestão de Pousada é uma aplicação completa para automatizar processos operacionais de estabelecimentos hoteleiros de pequeno e médio porte. O sistema oferece controle total sobre:
+API REST desenvolvida com Spring Boot para gerenciamento completo de pousadas, automatizando processos operacionais de estabelecimentos hoteleiros de pequeno e médio porte.
 
-- Cadastro e gerenciamento de hóspedes
-- Gestão de quartos e disponibilidade
-- Controle completo do ciclo de reservas (check-in, check-out, cancelamento)
-- Processamento de pagamentos
-- Métricas e relatórios (taxa de ocupação, receita por período)
+### Principais Features
 
-## 🛠 Tecnologias Utilizadas
+- 👥 **Gestão de Hóspedes** - Cadastro completo com validação de CPF
+- 🛏️ **Controle de Quartos** - Tipos, preços e status (disponível/ocupado/manutenção)
+- 📅 **Sistema de Reservas** - Ciclo completo: criação → check-in → check-out
+- 💰 **Processamento de Pagamentos** - Múltiplos métodos (PIX, cartão, dinheiro)
+- 📊 **Métricas e Relatórios** - Taxa de ocupação e receita por período
+- 🔐 **Validações Robustas** - Bean Validation com annotations customizadas
+- 🗄️ **Persistência** - Spring Data JPA + PostgreSQL
+- ⚠️ **Exception Handling** - Tratamento centralizado de erros
+- 🧪 **Testes Completos** - JUnit 5 + Mockito + AssertJ
 
-### Backend
-- **Java 17+**
-- **Spring Boot 3.x**
-  - Spring Web
-  - Spring Data JPA
-  - Spring Validation
-- **Maven** - Gerenciamento de dependências
-- **Banco de Dados** - JPA/Hibernate (compatível com PostgreSQL, MySQL, H2)
-- **Lombok** - Redução de código boilerplate
+---
 
-### Testes
-- **JUnit 5** - Framework de testes
-- **Mockito** - Mock de dependências
-- **AssertJ** - Assertions fluentes
-- **Spring Boot Test** - Testes de integração
-- **H2 Database** - Banco em memória para testes
+## 🚀 Instalação
 
-## ✨ Funcionalidades
+### Pré-requisitos
 
-### 👤 Gestão de Hóspedes
-- Cadastro de novos hóspedes com validação de CPF
-- Listagem de todos os hóspedes
-- Busca por ID
-- Atualização de dados cadastrais
-- Validação automática de CPF duplicado
+```bash
+☕ Java 17+
+🐘 PostgreSQL 16+
+📦 Maven 3.9+
+```
 
-### 🛏️ Gestão de Quartos
-- Cadastro de quartos com tipo e preço
-- Listagem de todos os quartos
-- Busca por número do quarto
-- Atualização de dados e preços
-- Controle de status (DISPONÍVEL, OCUPADO, MANUTENÇÃO)
-- Listagem de quartos disponíveis
+### Setup Rápido
 
-### 📅 Gestão de Reservas
-- Criação de reservas com validação de disponibilidade
-- **Suporte a múltiplas reservas futuras no mesmo quarto**
-- Processo completo de check-in (marca quarto como OCUPADO)
-- Registro de devolução de chaves
-- Processo completo de check-out (libera quarto para DISPONÍVEL)
-- Cancelamento de reservas (com liberação automática de quarto se necessário)
-- Processamento de pagamentos (múltiplos métodos)
-- Listagem de todas as reservas
-- Consulta de reservas do dia
-- Histórico de reservas por quarto
+**1. Clone o repositório**
+```bash
+git clone https://github.com/YanAlmeida/sistema-gestao-pousada.git
+cd sistema-gestao-pousada
+```
 
-### 📊 Métricas e Relatórios
-- Cálculo de receita por período
-- Taxa de ocupação em tempo real
+**2. Configure o banco de dados**
+```sql
+CREATE DATABASE pousada_db;
+```
 
-## 📁 Estrutura do Projeto
+**3. Configure `application.properties`**
+```properties
+spring.datasource.url=jdbc:postgresql://localhost:5432/pousada_db
+spring.datasource.username=postgres
+spring.datasource.password=sua_senha
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+```
+
+**4. Execute**
+```bash
+mvn clean install
+mvn spring-boot:run
+```
+
+**5. Acesse a API**
+```
+🌐 Base URL: http://localhost:8080
+```
+
+---
+
+## 🛠️ Stack Tecnológica
+
+| Tecnologia | Versão | Descrição |
+|------------|--------|-----------|
+| **Java** | 17+ | Linguagem principal |
+| **Spring Boot** | 3.x | Framework core |
+| **Spring Data JPA** | 3.x | Camada de persistência |
+| **Hibernate** | 6.x | ORM |
+| **PostgreSQL** | 16 | Banco de dados relacional |
+| **Hibernate Validator** | 8.x | Validações Bean Validation |
+| **Lombok** | 1.18+ | Redução de boilerplate |
+| **JUnit 5** | 5.x | Framework de testes |
+| **Mockito** | 5.x | Mock de dependências |
+| **AssertJ** | 3.x | Assertions fluentes |
+| **Maven** | 3.9+ | Build e gerenciamento de dependências |
+
+---
+
+## 🔌 Endpoints
+
+### 👥 Hóspedes (`/pousada/hospedes`)
+
+| Método | Endpoint | Descrição | Status |
+|--------|----------|-----------|--------|
+| `POST` | `/pousada/hospedes` | Cadastrar novo hóspede | 201, 400, 409 |
+| `GET` | `/pousada/hospedes` | Listar todos os hóspedes | 200 |
+| `GET` | `/pousada/hospedes/{id}` | Buscar hóspede por ID | 200, 404 |
+| `PUT` | `/pousada/hospedes/{id}` | Atualizar dados do hóspede | 200, 404 |
+
+**Exemplo - Cadastrar Hóspede:**
+```json
+POST /pousada/hospedes
+
+{
+  "nome": "João Silva",
+  "telefone": "(11) 98765-4321",
+  "cpf": "12345678901"
+}
+```
+
+**Resposta (201):**
+```json
+{
+  "id": 1,
+  "nome": "João Silva",
+  "telefone": "(11) 98765-4321",
+  "cpf": "123.456.789-01"
+}
+```
+
+### 🛏️ Quartos (`/pousada/quartos`)
+
+| Método | Endpoint | Descrição | Status |
+|--------|----------|-----------|--------|
+| `POST` | `/pousada/quartos` | Cadastrar novo quarto | 201, 400, 409 |
+| `GET` | `/pousada/quartos` | Listar todos os quartos | 200 |
+| `GET` | `/pousada/quartos/{numero}` | Buscar quarto por número | 200, 404 |
+| `PUT` | `/pousada/quartos/{numero}` | Atualizar dados do quarto | 200, 404 |
+| `PUT` | `/pousada/quartos/{numero}/status` | Atualizar status do quarto | 200, 404 |
+| `GET` | `/pousada/quartos/disponiveis` | Listar quartos disponíveis | 200 |
+
+**Exemplo - Cadastrar Quarto:**
+```json
+POST /pousada/quartos
+
+{
+  "numero": 101,
+  "tipo": "CASAL",
+  "precoPorNoite": 150.00
+}
+```
+
+**Resposta (201):**
+```json
+{
+  "id": 1,
+  "numero": 101,
+  "tipo": "CASAL",
+  "precoPorNoite": 150.00,
+  "status": "DISPONIVEL"
+}
+```
+
+### 📅 Reservas (`/pousada/reservas`)
+
+| Método | Endpoint | Descrição | Status |
+|--------|----------|-----------|--------|
+| `POST` | `/pousada/reservas` | Criar nova reserva | 201, 400, 409 |
+| `PUT` | `/pousada/reservas/{id}/check-in` | Realizar check-in | 200, 404 |
+| `PUT` | `/pousada/reservas/{id}/devolucao-chave` | Registrar devolução de chave | 200, 404 |
+| `PUT` | `/pousada/reservas/{id}/check-out` | Realizar check-out | 200, 404 |
+| `PUT` | `/pousada/reservas/{id}/cancelar` | Cancelar reserva | 200, 404 |
+| `PUT` | `/pousada/reservas/{id}/pagamento` | Processar pagamento | 200, 404 |
+| `GET` | `/pousada/reservas` | Listar todas as reservas | 200 |
+| `GET` | `/pousada/reservas/hoje` | Listar reservas do dia | 200 |
+| `GET` | `/pousada/reservas/quarto/{numeroQuarto}` | Listar reservas por quarto | 200 |
+| `GET` | `/pousada/reservas/receita` | Calcular receita por período | 200 |
+| `GET` | `/pousada/reservas/taxa-ocupacao` | Consultar taxa de ocupação | 200 |
+
+**Exemplo - Criar Reserva:**
+```json
+POST /pousada/reservas
+
+{
+  "hospedeId": 1,
+  "numeroQuarto": 101,
+  "dataCheckIn": "2026-01-15",
+  "dataCheckOut": "2026-01-18",
+  "metodoPagamento": "CARTAO_CREDITO"
+}
+```
+
+**Resposta (201):**
+```json
+{
+  "id": 1,
+  "nomeHospede": "João Silva",
+  "cpfHospede": "123.456.789-01",
+  "telefoneHospede": "(11) 98765-4321",
+  "numeroQuarto": 101,
+  "tipoQuarto": "CASAL",
+  "dataCheckIn": "2026-01-15",
+  "dataCheckOut": "2026-01-18",
+  "valorTotal": 450.00,
+  "statusReserva": "ATIVA",
+  "metodoPagamento": "CARTAO_CREDITO",
+  "statusPagamento": "PENDENTE",
+  "statusChave": "NAO_DEVOLVIDA"
+}
+```
+
+**Exemplo - Processar Pagamento:**
+```
+PUT /pousada/reservas/1/pagamento?metodoPagamento=PIX
+```
+
+**Exemplo - Calcular Receita:**
+```
+GET /pousada/reservas/receita?inicio=2026-01-01&fim=2026-01-31
+```
+
+---
+
+## 🏗️ Arquitetura
+
+### Estrutura em Camadas
+
+```
+┌──────────────┐
+│  Controller  │  ← REST API (JSON) + Validações (@Valid)
+└──────┬───────┘
+       │
+┌──────▼───────┐
+│   Service    │  ← Regras de negócio + Lógica de reservas
+└──────┬───────┘
+       │
+┌──────▼───────┐
+│  Repository  │  ← Spring Data JPA (Query Methods)
+└──────┬───────┘
+       │
+┌──────▼───────┐
+│  PostgreSQL  │  ← Banco de dados
+└──────────────┘
+```
+
+### Estrutura de Diretórios
 
 ```
 src/
 ├── main/
 │   └── java/dev/YanAlmeida/SistemaDeGestaoDePousada/
-│       ├── controller/          # Controladores REST
+│       ├── 📁 controller/
 │       │   ├── HospedeController.java
 │       │   ├── QuartoController.java
 │       │   └── ReservaController.java
 │       │
-│       ├── dto/                 # Data Transfer Objects
+│       ├── 📁 service/
+│       │   ├── HospedeService.java
+│       │   ├── QuartoService.java
+│       │   └── ReservaService.java
+│       │
+│       ├── 📁 repository/
+│       │   ├── HospedeRepository.java
+│       │   ├── QuartoRepository.java
+│       │   └── ReservaRepository.java
+│       │
+│       ├── 📁 entity/
+│       │   ├── HospedeModel.java
+│       │   ├── QuartoModel.java
+│       │   └── ReservaModel.java
+│       │
+│       ├── 📁 dto/
 │       │   ├── hospede/
 │       │   │   ├── HospedeCreateDTO.java
 │       │   │   └── HospedeResponseDTO.java
@@ -117,22 +301,12 @@ src/
 │       │       ├── ReservaResponseDTO.java
 │       │       └── PagamentoDTO.java
 │       │
-│       ├── entity/              # Entidades JPA
-│       │   ├── HospedeModel.java
-│       │   ├── QuartoModel.java
-│       │   └── ReservaModel.java
+│       ├── 📁 mapper/
+│       │   ├── HospedeMapper.java
+│       │   ├── QuartoMapper.java
+│       │   └── ReservaMapper.java
 │       │
-│       ├── enums/               # Enumerações
-│       │   ├── quarto/
-│       │   │   ├── QuartoStatus.java
-│       │   │   └── TipoQuarto.java
-│       │   └── reserva/
-│       │       ├── StatusReserva.java
-│       │       ├── StatusPagamento.java
-│       │       ├── StatusChave.java
-│       │       └── MetodoPagamento.java
-│       │
-│       ├── exception/           # Exceções customizadas
+│       ├── 📁 exception/
 │       │   ├── global/
 │       │   │   ├── GlobalExceptionHandler.java
 │       │   │   └── ErrorResponse.java
@@ -140,29 +314,24 @@ src/
 │       │   ├── quarto/
 │       │   └── reserva/
 │       │
-│       ├── mapper/              # Conversores DTO ↔ Entity
-│       │   ├── HospedeMapper.java
-│       │   ├── QuartoMapper.java
-│       │   └── ReservaMapper.java
-│       │
-│       ├── repository/          # Repositórios JPA
-│       │   ├── HospedeRepository.java
-│       │   ├── QuartoRepository.java
-│       │   └── ReservaRepository.java
-│       │
-│       └── service/             # Lógica de negócio
-│           ├── HospedeService.java
-│           ├── QuartoService.java
-│           └── ReservaService.java
+│       └── 📁 enums/
+│           ├── quarto/
+│           │   ├── QuartoStatus.java
+│           │   └── TipoQuarto.java
+│           └── reserva/
+│               ├── StatusReserva.java
+│               ├── StatusPagamento.java
+│               ├── StatusChave.java
+│               └── MetodoPagamento.java
 │
 └── test/
     └── java/dev/YanAlmeida/SistemaDeGestaoDePousada/
-        ├── repository/          # Testes de integração com @DataJpaTest
+        ├── 📁 repository/
         │   ├── HospedeRepositoryTest.java
         │   ├── QuartoRepositoryTest.java
         │   └── ReservaRepositoryTest.java
         │
-        ├── service/             # Testes unitários com Mockito
+        ├── 📁 service/
         │   ├── HospedeServiceTest.java
         │   ├── QuartoServiceTest.java
         │   └── ReservaServiceTest.java
@@ -170,67 +339,173 @@ src/
         └── SistemaDeGestaoDePousadaApplicationTests.java
 ```
 
-## 🚀 Instalação e Configuração
+### Padrões de Projeto
 
-### Pré-requisitos
+- ✅ **Layered Architecture** - Controller → Service → Repository
+- ✅ **DTO Pattern** - Separação entre objetos de transferência e entidades
+- ✅ **Repository Pattern** - Abstração de acesso a dados
+- ✅ **Mapper Pattern** - Conversão entre DTOs e Entities
+- ✅ **Exception Handling** - `@ControllerAdvice` para tratamento global
+- ✅ **Bean Validation** - Validações declarativas (@Valid, @CPF, @NotBlank)
+- ✅ **Transaction Management** - `@Transactional` para operações atômicas
 
-- Java 17 ou superior
-- Maven 3.6+
-- Banco de dados (PostgreSQL, MySQL ou H2)
+---
 
-### Passos para Instalação
+## 🗄️ Modelo de Dados
 
-1. **Clone o repositório**
-```bash
-git clone https://github.com/YanAlmeida/sistema-gestao-pousada.git
-cd sistema-gestao-pousada
+```sql
+┌────────────────────┐     ┌────────────────────┐     ┌─────────────────────┐
+│    TB_HOSPEDE      │     │     TB_QUARTO      │     │     TB_RESERVA      │
+├────────────────────┤     ├────────────────────┤     ├─────────────────────┤
+│ id (PK)   BIGSERIAL│     │ id (PK)   BIGSERIAL│     │ id (PK)    BIGSERIAL│
+│ nome      VARCHAR  │     │ numero    INTEGER  │     │ nome_hosp  VARCHAR  │
+│ cpf       VARCHAR  │     │ tipo      VARCHAR  │     │ cpf_hosp   VARCHAR  │
+│ telefone  VARCHAR  │     │ preco     NUMERIC  │     │ tel_hosp   VARCHAR  │
+└────────────────────┘     │ status    VARCHAR  │     │ num_quarto INTEGER  │
+   UNIQUE: cpf             └────────────────────┘     │ tipo_quarto VARCHAR │
+                              UNIQUE: numero          │ dt_checkin  DATE    │
+                                                       │ dt_checkout DATE    │
+                                                       │ valor_total NUMERIC │
+                                                       │ status_res  VARCHAR │
+                                                       │ metodo_pag  VARCHAR │
+                                                       │ status_pag  VARCHAR │
+                                                       │ status_chave VARCHAR│
+                                                       └─────────────────────┘
 ```
 
-2. **Configure o banco de dados**
+**Relacionamentos:**
+- Hóspede → Reservas (1:N conceitual)
+- Quarto → Reservas (1:N histórico)
+- Reservas armazenam dados desnormalizados para histórico
 
-Edite o arquivo `src/main/resources/application.properties`:
+**Constraints:**
+- CPF único por hóspede
+- Número único por quarto
+- Validação de conflito de datas nas reservas
 
-```properties
-# Configuração do banco de dados
-spring.datasource.url=jdbc:postgresql://localhost:5432/pousada_db
-spring.datasource.username=seu_usuario
-spring.datasource.password=sua_senha
+---
 
-# JPA/Hibernate
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-spring.jpa.properties.hibernate.format_sql=true
+## ⚙️ Regras de Negócio
+
+### Validações (Bean Validation)
+
+```java
+// HospedeCreateDTO
+@NotBlank(message = "Nome do hóspede é obrigatório")
+private String nome;
+
+@NotBlank(message = "Telefone é obrigatório")
+private String telefone;
+
+@NotBlank(message = "CPF é obrigatório")
+@CPF(message = "CPF inválido")
+private String cpf;
+
+// QuartoCreateDTO
+@NotNull(message = "Número do quarto é obrigatório")
+private Integer numero;
+
+@NotNull(message = "Tipo do quarto é obrigatório")
+private TipoQuarto tipo;
+
+@NotNull(message = "Preço por noite é obrigatório")
+@DecimalMin(value = "0.0", inclusive = false)
+private BigDecimal precoPorNoite;
+
+// ReservaCreateDTO
+@NotNull(message = "ID do hóspede é obrigatório")
+private Long hospedeId;
+
+@NotNull(message = "Data de check-in é obrigatória")
+private LocalDate dataCheckIn;
+
+@NotNull(message = "Data de check-out é obrigatória")
+private LocalDate dataCheckOut;
 ```
 
-3. **Compile o projeto**
-```bash
-mvn clean install
+### Hóspedes
+
+- ✅ CPF único no sistema com formatação automática
+- ✅ Validação de CPF via Hibernate Validator
+- ✅ Campos obrigatórios: nome, telefone, CPF
+
+### Quartos
+
+- ✅ Número único por quarto
+- ✅ Status inicial: DISPONÍVEL
+- ✅ Tipos: SOLTEIRO, CASAL, TRIPLA
+- ✅ Preço deve ser maior que zero
+
+### Reservas - Ciclo Completo
+
+#### 1️⃣ Criação de Reserva
+```
+✓ Data check-out > check-in
+✓ Verificação de conflitos de datas
+✓ Múltiplas reservas futuras permitidas (datas distintas)
+✓ Quarto permanece DISPONÍVEL
+✓ Cálculo automático: valorTotal = dias × precoPorNoite
+✓ Status inicial: ATIVA | PENDENTE | NAO_DEVOLVIDA
 ```
 
-4. **Execute a aplicação**
-```bash
-mvn spring-boot:run
+#### 2️⃣ Check-in
+```
+✓ Reserva deve estar ATIVA
+✓ Deve ser a data de check-in ou posterior
+✓ Quarto muda para OCUPADO ✅
 ```
 
-A API estará disponível em: `http://localhost:8080`
+#### 3️⃣ Devolução de Chave
+```
+✓ Reserva deve estar ATIVA
+✓ Status muda para: DEVOLVIDA
+```
+
+#### 4️⃣ Check-out
+```
+✓ Reserva deve estar ATIVA
+✓ Pagamento deve estar PAGO
+✓ Chave deve estar DEVOLVIDA
+✓ Quarto volta para DISPONÍVEL ✅
+✓ Reserva muda para FINALIZADA
+```
+
+#### 5️⃣ Cancelamento
+```
+✓ Apenas reservas ATIVAS
+✓ Se check-in feito → libera quarto (DISPONÍVEL)
+✓ Se check-in não feito → quarto já está disponível
+```
+
+### Fluxo Ideal
+
+```
+1. Criar Reserva     → Quarto: DISPONÍVEL
+2. Processar Pag.    → Status: PAGO
+3. Fazer Check-in    → Quarto: OCUPADO ✅
+4. Devolver Chave    → Chave: DEVOLVIDA
+5. Fazer Check-out   → Quarto: DISPONÍVEL ✅ | Reserva: FINALIZADA
+```
+
+---
 
 ## 🧪 Testes
 
-O projeto possui cobertura completa de testes para as camadas de repositório e serviço.
+O projeto possui **cobertura completa de testes** para garantir qualidade e confiabilidade.
 
-### Executar todos os testes
+### Executar Todos os Testes
 ```bash
 mvn test
 ```
 
-### Executar testes específicos
+### Executar Testes Específicos
 ```bash
-# Testes de repositório
+# Testes de Repositório
 mvn test -Dtest=HospedeRepositoryTest
 mvn test -Dtest=QuartoRepositoryTest
 mvn test -Dtest=ReservaRepositoryTest
 
-# Testes de serviço
+# Testes de Serviço
 mvn test -Dtest=HospedeServiceTest
 mvn test -Dtest=QuartoServiceTest
 mvn test -Dtest=ReservaServiceTest
@@ -239,35 +514,48 @@ mvn test -Dtest=ReservaServiceTest
 ### Estrutura dos Testes
 
 #### 📦 Testes de Repositório (@DataJpaTest)
-Testes de integração com banco H2 em memória, validando:
-- Operações CRUD completas
-- Queries customizadas
-- Relacionamentos entre entidades
-- Validações de dados
-- Comportamento do JPA/Hibernate
+**Cobertura:** Operações de persistência e queries customizadas
 
-**Exemplos de cenários testados:**
-- `HospedeRepositoryTest`: findByCpf, existsByCpf, validações de CPF único
-- `QuartoRepositoryTest`: findByNumeroQuarto, findByQuartoStatus, validações de número único
-- `ReservaRepositoryTest`: findByDataCheckIn, findByDataCheckOut, findByCpfHospede, findByNumeroQuarto
+```java
+@DataJpaTest
+@ActiveProfiles("test")
+class HospedeRepositoryTest {
+    // Testa findByCpf, existsByCpf, save, update, delete
+    // Usa banco H2 em memória
+}
+```
+
+**Cenários testados:**
+- ✅ Busca por CPF/número/ID
+- ✅ Verificação de existência
+- ✅ Validação de unicidade
+- ✅ Operações CRUD completas
+- ✅ Queries customizadas (findByDataCheckIn, findByStatus)
 
 #### 🎯 Testes de Serviço (@ExtendWith(MockitoExtension))
-Testes unitários com mocks, validando:
-- Lógica de negócio
-- Tratamento de exceções
-- Fluxos de operações
-- Validações de regras
+**Cobertura:** Regras de negócio e validações
 
-**Exemplos de cenários testados:**
-- Cadastro com sucesso e com CPF/número duplicado
-- Validações de dados obrigatórios
-- Operações de busca, atualização e exclusão
-- Cálculos (receita, taxa de ocupação)
-- Fluxo completo de reservas (criação → check-in → check-out)
+```java
+@ExtendWith(MockitoExtension.class)
+class ReservaServiceTest {
+    @Mock
+    private ReservaRepository reservaRepository;
+    
+    @InjectMocks
+    private ReservaService reservaService;
+    
+    // Testa lógica de negócio com mocks
+}
+```
+
+**Cenários testados:**
+- ✅ Criação com sucesso e validações
+- ✅ Conflitos de datas
+- ✅ Status de reserva/pagamento/chave
+- ✅ Cálculos (receita, taxa de ocupação)
+- ✅ Exceções customizadas
 
 ### Perfil de Teste
-
-O projeto utiliza um perfil de teste separado:
 
 **`src/test/resources/application-test.properties`**
 ```properties
@@ -277,236 +565,138 @@ spring.jpa.hibernate.ddl-auto=create-drop
 spring.jpa.show-sql=false
 ```
 
-## 📡 Endpoints da API
+---
 
-### 👤 Hóspedes (`/pousada/hospedes`)
+## 🧪 Testando a API
 
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| POST | `/pousada/hospedes` | Cadastrar novo hóspede |
-| GET | `/pousada/hospedes` | Listar todos os hóspedes |
-| GET | `/pousada/hospedes/{id}` | Buscar hóspede por ID |
-| PUT | `/pousada/hospedes/{id}` | Atualizar dados do hóspede |
+### Via cURL
 
-**Exemplo de requisição - Cadastrar hóspede:**
-```json
-POST /pousada/hospedes
-{
-  "nome": "João Silva",
-  "telefone": "(11) 98765-4321",
-  "cpf": "123.456.789-00"
-}
+```bash
+# Criar hóspede
+curl -X POST http://localhost:8080/pousada/hospedes \
+  -H "Content-Type: application/json" \
+  -d '{
+    "nome": "João Silva",
+    "telefone": "(11) 98765-4321",
+    "cpf": "12345678901"
+  }'
+
+# Criar quarto
+curl -X POST http://localhost:8080/pousada/quartos \
+  -H "Content-Type: application/json" \
+  -d '{
+    "numero": 101,
+    "tipo": "CASAL",
+    "precoPorNoite": 150.00
+  }'
+
+# Criar reserva
+curl -X POST http://localhost:8080/pousada/reservas \
+  -H "Content-Type: application/json" \
+  -d '{
+    "hospedeId": 1,
+    "numeroQuarto": 101,
+    "dataCheckIn": "2026-01-15",
+    "dataCheckOut": "2026-01-18",
+    "metodoPagamento": "PIX"
+  }'
+
+# Processar pagamento
+curl -X PUT "http://localhost:8080/pousada/reservas/1/pagamento?metodoPagamento=PIX"
+
+# Fazer check-in
+curl -X PUT http://localhost:8080/pousada/reservas/1/check-in
+
+# Taxa de ocupação
+curl http://localhost:8080/pousada/reservas/taxa-ocupacao
+
+# Receita do mês
+curl "http://localhost:8080/pousada/reservas/receita?inicio=2026-01-01&fim=2026-01-31"
 ```
 
-### 🛏️ Quartos (`/pousada/quartos`)
+### Via Postman/Insomnia
 
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| POST | `/pousada/quartos` | Cadastrar novo quarto |
-| GET | `/pousada/quartos` | Listar todos os quartos |
-| GET | `/pousada/quartos/{numero}` | Buscar quarto por número |
-| PUT | `/pousada/quartos/{numero}` | Atualizar dados do quarto |
-| PUT | `/pousada/quartos/{numero}/status` | Atualizar status do quarto |
-| GET | `/pousada/quartos/disponiveis` | Listar quartos disponíveis |
+Importe a coleção de endpoints disponível no repositório.
 
-**Exemplo de requisição - Cadastrar quarto:**
-```json
-POST /pousada/quartos
-{
-  "numero": 101,
-  "tipo": "CASAL",
-  "precoPorNoite": 150.00
-}
-```
+---
 
-### 📅 Reservas (`/pousada/reservas`)
+## 🔒 Tratamento de Erros
 
-| Método | Endpoint | Descrição |
-|--------|----------|-----------|
-| POST | `/pousada/reservas` | Criar nova reserva |
-| PUT | `/pousada/reservas/{id}/check-in` | Realizar check-in |
-| PUT | `/pousada/reservas/{id}/devolucao-chave` | Registrar devolução de chave |
-| PUT | `/pousada/reservas/{id}/check-out` | Realizar check-out |
-| PUT | `/pousada/reservas/{id}/cancelar` | Cancelar reserva |
-| PUT | `/pousada/reservas/{id}/pagamento` | Processar pagamento |
-| GET | `/pousada/reservas` | Listar todas as reservas |
-| GET | `/pousada/reservas/hoje` | Listar reservas do dia |
-| GET | `/pousada/reservas/quarto/{numeroQuarto}` | Listar reservas por quarto |
-| GET | `/pousada/reservas/receita?inicio=data&fim=data` | Calcular receita por período |
-| GET | `/pousada/reservas/taxa-ocupacao` | Consultar taxa de ocupação |
+### Exception Handler Global
 
-**Exemplo de requisição - Criar reserva:**
-```json
-POST /pousada/reservas
-{
-  "hospedeId": 1,
-  "numeroQuarto": 101,
-  "dataCheckIn": "2026-01-15",
-  "dataCheckOut": "2026-01-18",
-  "metodoPagamento": "CARTAO_CREDITO"
-}
-```
-
-**Exemplo de requisição - Processar pagamento:**
-```
-PUT /pousada/reservas/1/pagamento?metodoPagamento=PIX
-```
-
-## 📊 Modelos de Dados
-
-### Hóspede
 ```java
-{
-  "id": Long,
-  "nome": String,
-  "telefone": String,
-  "cpf": String (formato: 000.000.000-00)
+@RestControllerAdvice
+public class GlobalExceptionHandler {
+    
+    @ExceptionHandler(ReservaNotFoundExceptionById.class)
+    public ResponseEntity<ErrorResponse> handleReservaNotFound() {
+        return ResponseEntity.status(404).body(...);
+    }
+    
+    @ExceptionHandler(QuartoOcupadoException.class)
+    public ResponseEntity<ErrorResponse> handleQuartoOcupado() {
+        return ResponseEntity.status(409).body(...);
+    }
+    
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<Map<String, Object>> handleValidation() {
+        return ResponseEntity.status(400).body(...);
+    }
 }
 ```
 
-### Quarto
-```java
-{
-  "id": Long,
-  "numero": Integer,
-  "tipo": Enum (SOLTEIRO, CASAL, TRIPLA),
-  "precoPorNoite": BigDecimal,
-  "status": Enum (DISPONIVEL, OCUPADO, MANUTENÇÃO)
-}
-```
+### Códigos de Status HTTP
 
-### Reserva
-```java
-{
-  "id": Long,
-  "nomeHospede": String,
-  "cpfHospede": String,
-  "telefoneHospede": String,
-  "numeroQuarto": Integer,
-  "tipoQuarto": Enum,
-  "dataCheckIn": LocalDate,
-  "dataCheckOut": LocalDate,
-  "valorTotal": BigDecimal,
-  "statusReserva": Enum (ATIVA, CANCELADA, NAO_APARECEU, FINALIZADA),
-  "metodoPagamento": Enum (DINHEIRO, CARTAO_CREDITO, CARTAO_DEBITO, PIX),
-  "statusPagamento": Enum (PENDENTE, PAGO, REEMBOLSADO),
-  "statusChave": Enum (NAO_DEVOLVIDA, DEVOLVIDA)
-}
-```
+| Status | Descrição |
+|--------|-----------|
+| `200` | Sucesso (GET, PUT) |
+| `201` | Criado com sucesso (POST) |
+| `204` | Deletado com sucesso (DELETE) |
+| `400` | Validação falhou |
+| `404` | Recurso não encontrado |
+| `409` | Conflito (CPF/quarto duplicado, datas conflitantes) |
+| `500` | Erro interno do servidor |
 
-## 📜 Regras de Negócio
+---
 
-### Hóspedes
-- CPF deve ser único no sistema
-- Validação automática de formato de CPF
-- Campos obrigatórios: nome, telefone, CPF
+## 🚀 Melhorias Futuras
 
-### Quartos
-- Número do quarto deve ser único
-- Status inicial: DISPONÍVEL
-- Preço por noite deve ser maior que zero
+### Prioridade Alta
+- [ ] **Autenticação e Autorização** (Spring Security + JWT)
+- [ ] **Documentação Swagger** (SpringDoc OpenAPI)
 
-### Reservas
+### Prioridade Média
+- [ ] Sistema de notificações (email/SMS)
+- [ ] Relatórios avançados (PDF/Excel)
 
-#### Criação de Reserva
-- Data de check-out deve ser posterior ao check-in
-- Não é permitido criar reservas conflitantes no mesmo quarto
-- **Múltiplas reservas futuras são permitidas no mesmo quarto** (datas não conflitantes)
-- O quarto **NÃO** é marcado como OCUPADO na criação (permanece DISPONÍVEL)
-- Valor total calculado automaticamente: (dias × preço por noite)
+### Prioridade Baixa
+- [ ] Dashboard administrativo
+- [ ] Logs estruturados (ELK Stack)
+- [ ] Métricas com Actuator + Prometheus
+- [ ] CI/CD (GitHub Actions)
+- [ ] Containerização (Docker + Docker Compose)
+- [ ] Deploy na nuvem (AWS/Azure)
 
-#### Check-in
-- Só pode ser realizado em reservas ATIVAS
-- Deve ser executado na data de check-in ou após
-- **O quarto é marcado como OCUPADO apenas no check-in**
-
-#### Check-out
-- Requer reserva em status ATIVA
-- Pagamento deve estar processado (status PAGO)
-- Chave deve estar devolvida
-- **O quarto é liberado (DISPONÍVEL) após check-out bem-sucedido**
-- Reserva muda para status FINALIZADA
-
-#### Cancelamento
-- Apenas reservas ATIVAS podem ser canceladas
-- **Se check-in já foi feito, o quarto é liberado automaticamente**
-- **Se check-in não foi feito, o quarto permanece DISPONÍVEL**
-
-#### Pagamentos
-- Métodos aceitos: DINHEIRO, CARTAO_CREDITO, CARTAO_DEBITO, PIX
-- Status inicial: PENDENTE
-- Somente reservas ATIVAS podem processar pagamento
-
-### Fluxo Ideal de Reserva
-
-```
-1. Criar Reserva
-   └─> Quarto: DISPONÍVEL
-   └─> Status: ATIVA | Pagamento: PENDENTE | Chave: NAO_DEVOLVIDA
-
-2. Processar Pagamento
-   └─> Status: ATIVA | Pagamento: PAGO | Chave: NAO_DEVOLVIDA
-
-3. Fazer Check-in (na data)
-   └─> Quarto: OCUPADO ✅
-   └─> Status: ATIVA | Pagamento: PAGO | Chave: NAO_DEVOLVIDA
-
-4. Devolver Chave
-   └─> Status: ATIVA | Pagamento: PAGO | Chave: DEVOLVIDA
-
-5. Fazer Check-out
-   └─> Quarto: DISPONÍVEL ✅
-   └─> Status: FINALIZADA | Pagamento: PAGO | Chave: DEVOLVIDA
-```
-
-## 🔜 Próximos Passos
-
-### Funcionalidades Prioritárias
-
-1. **Autenticação e Segurança** 🔒
-   - Implementar Spring Security
-   - Autenticação JWT
-   - Controle de acesso por roles (ADMIN, RECEPCIONISTA, GERENTE)
-   - Auditoria de ações
-
-2. **Documentação da API** 📚
-   - Integrar Swagger/OpenAPI
-   - Documentar todos os endpoints
-   - Adicionar exemplos de requisições e respostas
-   - Gerar documentação interativa
-
-## 🤝 Contribuindo
-
-Contribuições são bem-vindas! Para contribuir:
-
-1. Faça um fork do projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/MinhaFeature`)
-3. Commit suas mudanças (`git commit -m 'Adiciona nova feature'`)
-4. Push para a branch (`git push origin feature/MinhaFeature`)
-5. Abra um Pull Request
-
-### Padrões de Código
-
-- Siga as convenções Java
-- Escreva testes para novas funcionalidades
-- Mantenha a cobertura de testes acima de 80%
-- Use nomes descritivos para variáveis e métodos
-- Documente código complexo
-
-## 📝 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+---
 
 ## 👨‍💻 Autor
 
 **Yan Almeida**
 
-- GitHub: [@YanAlmeida](https://github.com/YanAlmeida)
-
-## 📞 Suporte
-
-Para reportar bugs ou sugerir melhorias, abra uma [issue](https://github.com/YanAlmeida/sistema-gestao-pousada/issues) no GitHub.
+- 🐱 GitHub: [@YanAlmeida](https://github.com/YanAlmeida)
 
 ---
 
+## 📝 Licença
+
+Este projeto está sob a licença MIT. Veja o arquivo [LICENSE](LICENSE) para mais detalhes.
+
+---
+
+<div align="center">
+
+**Desenvolvido com ☕ por Yan Almeida**
+
 ⭐ Se este projeto foi útil para você, considere dar uma estrela no repositório!
+
+</div>
