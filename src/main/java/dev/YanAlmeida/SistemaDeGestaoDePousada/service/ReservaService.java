@@ -53,17 +53,13 @@ public class ReservaService {
                 .orElseThrow(() -> new ReservaNotFoundExceptionByNumber(dto.getNumeroQuarto()));
 
         // Verificar conflito de datas
-        List<ReservaModel> reservasDoQuarto = reservaRepository.findByNumeroQuarto(dto.getNumeroQuarto());
-
         boolean temConflito = reservaRepository.findByNumeroQuarto(dto.getNumeroQuarto())
                 .stream()
                 .filter(r -> r.getStatusReserva() == StatusReserva.ATIVA)
-                .anyMatch(r ->
-                        r.getDataCheckIn().isBefore(dto.getDataCheckOut()) &&
-                                r.getDataCheckOut().isAfter(dto.getDataCheckIn())
-                );
+                .anyMatch(r -> r.getDataCheckIn().isBefore(dto.getDataCheckOut()) && r.getDataCheckOut().isAfter(dto.getDataCheckIn()));
 
-        if (temConflito) {throw new QuartoOcupadoException(
+        if (temConflito) {
+            throw new QuartoOcupadoException(
                     dto.getNumeroQuarto(),
                     dto.getDataCheckIn(),
                     dto.getDataCheckOut()
@@ -97,10 +93,6 @@ public class ReservaService {
         reserva.setStatusPagamento(StatusPagamento.PENDENTE);
         reserva.setStatusChave(StatusChave.NAO_DEVOLVIDA);
 
-        // Atualizar status do quarto para OCUPADO
-        quarto.setQuartoStatus(QuartoStatus.OCUPADO);
-        quartoRepository.save(quarto);
-
         // Salvar reserva
         ReservaModel reservaSalva = reservaRepository.save(reserva);
         return ReservaMapper.toResponseDTO(reservaSalva);
@@ -123,6 +115,13 @@ public class ReservaService {
         if (LocalDate.now().isBefore(reserva.getDataCheckIn())){
             throw new CheckInInvalidoException("Ainda não é o dia do check-in");
         }
+
+        // ADICIONADO: Atualizar status do quarto para OCUPADO no check-in
+        QuartoModel quarto = quartoRepository.findByNumeroQuarto(reserva.getNumeroQuarto())
+                .orElseThrow(() -> new RuntimeException("Quarto não encontrado: " + reserva.getNumeroQuarto()));
+
+        quarto.setQuartoStatus(QuartoStatus.OCUPADO);
+        quartoRepository.save(quarto);
 
         return ReservaMapper.toResponseDTO(reserva);
     }
@@ -172,6 +171,14 @@ public class ReservaService {
 
         // Muda o status da reserva para FINALIZADA
         reserva.setStatusReserva(StatusReserva.FINALIZADA);
+
+        // ADICIONADO: Liberar o quarto após check-out
+        QuartoModel quarto = quartoRepository.findByNumeroQuarto(reserva.getNumeroQuarto())
+                .orElseThrow(() -> new RuntimeException("Quarto não encontrado: " + reserva.getNumeroQuarto()));
+
+        quarto.setQuartoStatus(QuartoStatus.DISPONIVEL);
+        quartoRepository.save(quarto);
+
         return ReservaMapper.toResponseDTO(reservaRepository.save(reserva));
     }
 
@@ -191,6 +198,15 @@ public class ReservaService {
 
         // Muda o status da reserva para CANCELADA
         reserva.setStatusReserva(StatusReserva.CANCELADA);
+
+        QuartoModel quarto = quartoRepository.findByNumeroQuarto(reserva.getNumeroQuarto())
+                .orElseThrow(() -> new RuntimeException("Quarto não encontrado: " + reserva.getNumeroQuarto()));
+
+        if (quarto.getQuartoStatus() == QuartoStatus.OCUPADO) {
+            quarto.setQuartoStatus(QuartoStatus.DISPONIVEL);
+            quartoRepository.save(quarto);
+        }
+
         return ReservaMapper.toResponseDTO(reservaRepository.save(reserva));
     }
 
