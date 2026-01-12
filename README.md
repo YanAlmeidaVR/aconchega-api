@@ -127,6 +127,8 @@ mvn spring-boot:run
 | `GET` | `/pousada/hospedes/{id}` | Buscar hóspede por ID | 200, 404 |
 | `PUT` | `/pousada/hospedes/{id}` | Atualizar dados do hóspede | 200, 404 |
 
+## 📦 Exemplos de Requisições
+
 **Exemplo - Cadastrar Hóspede:**
 ```json
 POST /pousada/hospedes
