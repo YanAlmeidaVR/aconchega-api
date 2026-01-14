@@ -60,4 +60,13 @@ public class HospedeService {
         HospedeModel atualizado = hospedeRepository.save(hospede);
         return HospedeMapper.toResponseDTO(atualizado);
     }
+
+    // 5. Deletar hóspede
+    public void deletar(Long id){
+        HospedeModel hospede = hospedeRepository.findById(id)
+                .orElseThrow(() -> new HospedeNotFoundException(id));
+
+        hospedeRepository.delete(hospede);
+    }
+
 }

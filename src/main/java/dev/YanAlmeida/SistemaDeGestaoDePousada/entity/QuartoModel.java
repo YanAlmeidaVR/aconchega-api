@@ -3,6 +3,8 @@ package dev.YanAlmeida.SistemaDeGestaoDePousada.entity;
 import dev.YanAlmeida.SistemaDeGestaoDePousada.enums.quarto.QuartoStatus;
 import dev.YanAlmeida.SistemaDeGestaoDePousada.enums.quarto.TipoQuarto;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 import java.math.BigDecimal;
@@ -18,6 +20,9 @@ public class QuartoModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
+    @NotNull
+    @Positive
     @Column(name = "numero_quarto", nullable = false, unique = true)
     private Integer numeroQuarto;
 

@@ -39,5 +39,10 @@ public class HospedeController {
         HospedeResponseDTO response = hospedeService.atualizar(id,hospede);
         return ResponseEntity.ok(response);
     }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletar(@PathVariable Long id) {
+        hospedeService.deletar(id);
+        return ResponseEntity.noContent().build();
+    }
 
 }
