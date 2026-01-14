@@ -30,7 +30,7 @@ public class QuartoService {
         QuartoModel quarto = QuartoMapper.toEntity(dto);
         QuartoModel salvo = quartoRepository.save(quarto);
 
-        return QuartoMapper.toResponseDTO(salvo);IT STATUS
+        return QuartoMapper.toResponseDTO(salvo);
     }
 
     // 2. Listar todos os quartos

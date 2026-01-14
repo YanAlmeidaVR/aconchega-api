@@ -58,10 +58,10 @@ public class ReservaService {
         boolean temConflito = reservaRepository.findByNumeroQuarto(dto.getNumeroQuarto())
                 .stream()
                 .filter(r -> r.getStatusReserva() == StatusReserva.ATIVA)
-                .anyMatch(r ->
-                        r.getDataCheckIn().isBefore(dto.getDataCheckOut()) &&
-                                r.getDataCheckOut().isAfter(dto.getDataCheckIn())
-                );
+                .anyMatch(r -> {
+                    return !dto.getDataCheckIn().isAfter(r.getDataCheckOut().minusDays(1)) &&
+                            !dto.getDataCheckOut().isBefore(r.getDataCheckIn().plusDays(1));
+                });
 
         if (temConflito) {throw new QuartoOcupadoException(
                     dto.getNumeroQuarto(),
