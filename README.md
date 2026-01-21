@@ -8,29 +8,11 @@
 ![Maven](https://img.shields.io/badge/Maven-3.9-C71A36?style=for-the-badge&logo=apache-maven&logoColor=white)
 ![JUnit5](https://img.shields.io/badge/JUnit5-Tested-25A162?style=for-the-badge&logo=junit5&logoColor=white)
 
-**API REST completa para gerenciamento de pousadas com controle de hóspedes, quartos e reservas**
+**API REST completa para gerenciamento de pousadas com controle de hóspedes, quartos e reservas e métricas operacionais**
 
 [Instalação](#-instalação) • [Endpoints](#-endpoints) • [Arquitetura](#-arquitetura) • [Testes](#-testes)
 
 </div>
-
----
-
-## ⚠️ Status do Projeto
-
-**🚧 EM DESENVOLVIMENTO 🚧**
-
-| Feature | Status |
-|---------|--------|
-| ✅ CRUD de Hóspedes | Concluído |
-| ✅ CRUD de Quartos | Concluído |
-| ✅ Sistema de Reservas | Concluído |
-| ✅ Testes Unitários (Services) | Concluído |
-| ✅ Testes de Integração (Repositories) | Concluído |
-| ⏳ Autenticação/Autorização | Pendente |
-| ⏳ Documentação Swagger | Pendente |
-
----
 
 ## 🎯 Sobre o Projeto
 
