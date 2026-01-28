@@ -1,4 +1,4 @@
-# 🏨 API REST - Sistema de Gestão de Pousada
+# 🏨 Aconchega API — Gestão de Hospedagem
 
 <div align="center">
 
@@ -8,27 +8,40 @@
 ![Maven](https://img.shields.io/badge/Maven-3.9-C71A36?style=for-the-badge&logo=apache-maven&logoColor=white)
 ![JUnit5](https://img.shields.io/badge/JUnit5-Tested-25A162?style=for-the-badge&logo=junit5&logoColor=white)
 
-**API REST completa para gerenciamento de pousadas com controle de hóspedes, quartos e reservas e métricas operacionais**
+**API REST para gestão de hospedagem, focada em regras de negócio, fluxo operacional e escalabilidade**
 
 [Instalação](#-instalação) • [Endpoints](#-endpoints) • [Arquitetura](#-arquitetura) • [Testes](#-testes)
 
 </div>
 
+---
+
 ## 🎯 Sobre o Projeto
 
-API REST desenvolvida com Spring Boot para gerenciamento completo de pousadas, automatizando processos operacionais de estabelecimentos hoteleiros de pequeno e médio porte.
+O **Aconchega** é uma API REST desenvolvida com **Spring Boot** para o gerenciamento completo de pousadas e hospedagens independentes.
 
-### Principais Features
+O sistema automatiza processos operacionais essenciais, como:
+- cadastro de hóspedes
+- controle de quartos
+- gestão de reservas
+- processamento de pagamentos
+- geração de métricas operacionais
 
-- 👥 **Gestão de Hóspedes** - Cadastro completo com validação de CPF
-- 🛏️ **Controle de Quartos** - Tipos, preços e status (disponível/ocupado/manutenção)
-- 📅 **Sistema de Reservas** - Ciclo completo: criação → check-in → check-out
-- 💰 **Processamento de Pagamentos** - Múltiplos métodos (PIX, cartão, dinheiro)
-- 📊 **Métricas e Relatórios** - Taxa de ocupação e receita por período
-- 🔐 **Validações Robustas** - Bean Validation com annotations customizadas
-- 🗄️ **Persistência** - Spring Data JPA + PostgreSQL
-- ⚠️ **Exception Handling** - Tratamento centralizado de erros
-- 🧪 **Testes Completos** - JUnit 5 + Mockito + AssertJ
+O foco do projeto é **modelar regras reais de negócio**, seguindo boas práticas de arquitetura backend.
+
+---
+
+## ✨ Principais Features
+
+- 👥 **Gestão de Hóspedes** — Cadastro completo com validação de CPF
+- 🛏️ **Controle de Quartos** — Tipos, preços e status (disponível, ocupado, manutenção)
+- 📅 **Sistema de Reservas** — Fluxo completo: criação → check-in → check-out
+- 💰 **Pagamentos** — PIX, cartão e dinheiro
+- 📊 **Métricas** — Taxa de ocupação e receita por período
+- 🔐 **Validações Robustas** — Bean Validation e validações customizadas
+- 🗄️ **Persistência** — Spring Data JPA + PostgreSQL
+- ⚠️ **Exception Handling** — Tratamento global e padronizado de erros
+- 🧪 **Testes Automatizados** — JUnit 5, Mockito e AssertJ
 
 ---
 
@@ -37,27 +50,27 @@ API REST desenvolvida com Spring Boot para gerenciamento completo de pousadas, a
 ### Pré-requisitos
 
 ```bash
-☕ Java 17+
-🐘 PostgreSQL 16+
-📦 Maven 3.9+
+Java 17+
+PostgreSQL 16+
+Maven 3.9+
 ```
 
 ### Setup Rápido
 
 **1. Clone o repositório**
 ```bash
-git clone https://github.com/YanAlmeida/sistema-gestao-pousada.git
-cd sistema-gestao-pousada
+git clone https://github.com/YanAlmeida/aconchega.git
+cd aconchega
 ```
 
 **2. Configure o banco de dados**
 ```sql
-CREATE DATABASE pousada_db;
+CREATE DATABASE aconchega_db;
 ```
 
 **3. Configure `application.properties`**
 ```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/pousada_db
+spring.datasource.url=jdbc:postgresql://localhost:5432/aconchega_db
 spring.datasource.username=postgres
 spring.datasource.password=sua_senha
 spring.datasource.driver-class-name=org.postgresql.Driver
@@ -100,20 +113,18 @@ mvn spring-boot:run
 
 ## 🔌 Endpoints
 
-### 👥 Hóspedes (`/pousada/hospedes`)
+### 👥 Hóspedes (`/aconchega/hospedes`)
 
 | Método | Endpoint | Descrição | Status |
 |--------|----------|-----------|--------|
-| `POST` | `/pousada/hospedes` | Cadastrar novo hóspede | 201, 400, 409 |
-| `GET` | `/pousada/hospedes` | Listar todos os hóspedes | 200 |
-| `GET` | `/pousada/hospedes/{id}` | Buscar hóspede por ID | 200, 404 |
-| `PUT` | `/pousada/hospedes/{id}` | Atualizar dados do hóspede | 200, 404 |
+| `POST` | `/aconchega/hospedes` | Cadastrar novo hóspede | 201, 400, 409 |
+| `GET` | `/aconchega/hospedes` | Listar todos os hóspedes | 200 |
+| `GET` | `/aconchega/hospedes/{id}` | Buscar hóspede por ID | 200, 404 |
+| `PUT` | `/aconchega/hospedes/{id}` | Atualizar dados do hóspede | 200, 404 |
 
-## 📦 Exemplos de Requisições
-
-**Exemplo - Cadastrar Hóspede:**
+**Exemplo — Cadastrar Hóspede:**
 ```json
-POST /pousada/hospedes
+POST /aconchega/hospedes
 
 {
   "nome": "João Silva",
@@ -132,20 +143,20 @@ POST /pousada/hospedes
 }
 ```
 
-### 🛏️ Quartos (`/pousada/quartos`)
+### 🛏️ Quartos (`/aconchega/quartos`)
 
 | Método | Endpoint | Descrição | Status |
 |--------|----------|-----------|--------|
-| `POST` | `/pousada/quartos` | Cadastrar novo quarto | 201, 400, 409 |
-| `GET` | `/pousada/quartos` | Listar todos os quartos | 200 |
-| `GET` | `/pousada/quartos/{numero}` | Buscar quarto por número | 200, 404 |
-| `PUT` | `/pousada/quartos/{numero}` | Atualizar dados do quarto | 200, 404 |
-| `PUT` | `/pousada/quartos/{numero}/status` | Atualizar status do quarto | 200, 404 |
-| `GET` | `/pousada/quartos/disponiveis` | Listar quartos disponíveis | 200 |
+| `POST` | `/aconchega/quartos` | Cadastrar novo quarto | 201, 400, 409 |
+| `GET` | `/aconchega/quartos` | Listar todos os quartos | 200 |
+| `GET` | `/aconchega/quartos/{numero}` | Buscar quarto por número | 200, 404 |
+| `PUT` | `/aconchega/quartos/{numero}` | Atualizar dados do quarto | 200, 404 |
+| `PUT` | `/aconchega/quartos/{numero}/status` | Atualizar status do quarto | 200, 404 |
+| `GET` | `/aconchega/quartos/disponiveis` | Listar quartos disponíveis | 200 |
 
-**Exemplo - Cadastrar Quarto:**
+**Exemplo — Cadastrar Quarto:**
 ```json
-POST /pousada/quartos
+POST /aconchega/quartos
 
 {
   "numero": 101,
@@ -165,25 +176,25 @@ POST /pousada/quartos
 }
 ```
 
-### 📅 Reservas (`/pousada/reservas`)
+### 📅 Reservas (`/aconchega/reservas`)
 
 | Método | Endpoint | Descrição | Status |
 |--------|----------|-----------|--------|
-| `POST` | `/pousada/reservas` | Criar nova reserva | 201, 400, 409 |
-| `PUT` | `/pousada/reservas/{id}/check-in` | Realizar check-in | 200, 404 |
-| `PUT` | `/pousada/reservas/{id}/devolucao-chave` | Registrar devolução de chave | 200, 404 |
-| `PUT` | `/pousada/reservas/{id}/check-out` | Realizar check-out | 200, 404 |
-| `PUT` | `/pousada/reservas/{id}/cancelar` | Cancelar reserva | 200, 404 |
-| `PUT` | `/pousada/reservas/{id}/pagamento` | Processar pagamento | 200, 404 |
-| `GET` | `/pousada/reservas` | Listar todas as reservas | 200 |
-| `GET` | `/pousada/reservas/hoje` | Listar reservas do dia | 200 |
-| `GET` | `/pousada/reservas/quarto/{numeroQuarto}` | Listar reservas por quarto | 200 |
-| `GET` | `/pousada/reservas/receita` | Calcular receita por período | 200 |
-| `GET` | `/pousada/reservas/taxa-ocupacao` | Consultar taxa de ocupação | 200 |
+| `POST` | `/aconchega/reservas` | Criar nova reserva | 201, 400, 409 |
+| `PUT` | `/aconchega/reservas/{id}/check-in` | Realizar check-in | 200, 404 |
+| `PUT` | `/aconchega/reservas/{id}/devolucao-chave` | Registrar devolução de chave | 200, 404 |
+| `PUT` | `/aconchega/reservas/{id}/check-out` | Realizar check-out | 200, 404 |
+| `PUT` | `/aconchega/reservas/{id}/cancelar` | Cancelar reserva | 200, 404 |
+| `PUT` | `/aconchega/reservas/{id}/pagamento` | Processar pagamento | 200, 404 |
+| `GET` | `/aconchega/reservas` | Listar todas as reservas | 200 |
+| `GET` | `/aconchega/reservas/hoje` | Listar reservas do dia | 200 |
+| `GET` | `/aconchega/reservas/quarto/{numeroQuarto}` | Listar reservas por quarto | 200 |
+| `GET` | `/aconchega/reservas/receita` | Calcular receita por período | 200 |
+| `GET` | `/aconchega/reservas/taxa-ocupacao` | Consultar taxa de ocupação | 200 |
 
-**Exemplo - Criar Reserva:**
+**Exemplo — Criar Reserva:**
 ```json
-POST /pousada/reservas
+POST /aconchega/reservas
 
 {
   "hospedeId": 1,
@@ -213,14 +224,14 @@ POST /pousada/reservas
 }
 ```
 
-**Exemplo - Processar Pagamento:**
+**Exemplo — Processar Pagamento:**
 ```
-PUT /pousada/reservas/1/pagamento?metodoPagamento=PIX
+PUT /aconchega/reservas/1/pagamento?metodoPagamento=PIX
 ```
 
-**Exemplo - Calcular Receita:**
+**Exemplo — Calcular Receita:**
 ```
-GET /pousada/reservas/receita?inicio=2026-01-01&fim=2026-01-31
+GET /aconchega/reservas/receita?inicio=2026-01-01&fim=2026-01-31
 ```
 
 ---
@@ -252,7 +263,7 @@ GET /pousada/reservas/receita?inicio=2026-01-01&fim=2026-01-31
 ```
 src/
 ├── main/
-│   └── java/dev/YanAlmeida/SistemaDeGestaoDePousada/
+│   └── java/dev/YanAlmeida/Aconchega/
 │       ├── 📁 controller/
 │       │   ├── HospedeController.java
 │       │   ├── QuartoController.java
@@ -309,7 +320,7 @@ src/
 │               └── MetodoPagamento.java
 │
 └── test/
-    └── java/dev/YanAlmeida/SistemaDeGestaoDePousada/
+    └── java/dev/YanAlmeida/Aconchega/
         ├── 📁 repository/
         │   ├── HospedeRepositoryTest.java
         │   ├── QuartoRepositoryTest.java
@@ -320,18 +331,18 @@ src/
         │   ├── QuartoServiceTest.java
         │   └── ReservaServiceTest.java
         │
-        └── SistemaDeGestaoDePousadaApplicationTests.java
+        └── AconchegaApplicationTests.java
 ```
 
 ### Padrões de Projeto
 
-- ✅ **Layered Architecture** - Controller → Service → Repository
-- ✅ **DTO Pattern** - Separação entre objetos de transferência e entidades
-- ✅ **Repository Pattern** - Abstração de acesso a dados
-- ✅ **Mapper Pattern** - Conversão entre DTOs e Entities
-- ✅ **Exception Handling** - `@ControllerAdvice` para tratamento global
-- ✅ **Bean Validation** - Validações declarativas (@Valid, @CPF, @NotBlank)
-- ✅ **Transaction Management** - `@Transactional` para operações atômicas
+- ✅ **Layered Architecture** — Controller → Service → Repository
+- ✅ **DTO Pattern** — Separação entre objetos de transferência e entidades
+- ✅ **Repository Pattern** — Abstração de acesso a dados
+- ✅ **Mapper Pattern** — Conversão entre DTOs e Entities
+- ✅ **Exception Handling** — `@ControllerAdvice` para tratamento global
+- ✅ **Bean Validation** — Validações declarativas (@Valid, @CPF, @NotBlank)
+- ✅ **Transaction Management** — `@Transactional` para operações atômicas
 
 ---
 
@@ -420,7 +431,7 @@ private LocalDate dataCheckOut;
 - ✅ Tipos: SOLTEIRO, CASAL, TRIPLA
 - ✅ Preço deve ser maior que zero
 
-### Reservas - Ciclo Completo
+### Reservas — Ciclo Completo
 
 #### 1️⃣ Criação de Reserva
 ```
@@ -557,7 +568,7 @@ spring.jpa.show-sql=false
 
 ```bash
 # Criar hóspede
-curl -X POST http://localhost:8080/pousada/hospedes \
+curl -X POST http://localhost:8080/aconchega/hospedes \
   -H "Content-Type: application/json" \
   -d '{
     "nome": "João Silva",
@@ -566,7 +577,7 @@ curl -X POST http://localhost:8080/pousada/hospedes \
   }'
 
 # Criar quarto
-curl -X POST http://localhost:8080/pousada/quartos \
+curl -X POST http://localhost:8080/aconchega/quartos \
   -H "Content-Type: application/json" \
   -d '{
     "numero": 101,
@@ -575,7 +586,7 @@ curl -X POST http://localhost:8080/pousada/quartos \
   }'
 
 # Criar reserva
-curl -X POST http://localhost:8080/pousada/reservas \
+curl -X POST http://localhost:8080/aconchega/reservas \
   -H "Content-Type: application/json" \
   -d '{
     "hospedeId": 1,
@@ -586,16 +597,16 @@ curl -X POST http://localhost:8080/pousada/reservas \
   }'
 
 # Processar pagamento
-curl -X PUT "http://localhost:8080/pousada/reservas/1/pagamento?metodoPagamento=PIX"
+curl -X PUT "http://localhost:8080/aconchega/reservas/1/pagamento?metodoPagamento=PIX"
 
 # Fazer check-in
-curl -X PUT http://localhost:8080/pousada/reservas/1/check-in
+curl -X PUT http://localhost:8080/aconchega/reservas/1/check-in
 
 # Taxa de ocupação
-curl http://localhost:8080/pousada/reservas/taxa-ocupacao
+curl http://localhost:8080/aconchega/reservas/taxa-ocupacao
 
 # Receita do mês
-curl "http://localhost:8080/pousada/reservas/receita?inicio=2026-01-01&fim=2026-01-31"
+curl "http://localhost:8080/aconchega/reservas/receita?inicio=2026-01-01&fim=2026-01-31"
 ```
 
 ### Via Postman/Insomnia
