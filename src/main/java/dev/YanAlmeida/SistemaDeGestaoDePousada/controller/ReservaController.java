@@ -15,7 +15,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/pousada/reservas")
+@RequestMapping("/aconchega/reservas")
 public class ReservaController {
 
     @Autowired
